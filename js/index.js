@@ -5,15 +5,15 @@ $(document).ready(function () {
     document.getElementById('modalSubmit').addEventListener('click', modalSubmit);
 
     function modalSubmit(e) {
-        let id = randomNumberID();
-        let productName = document.getElementById('productName').value;
+		
+        let id = randomNumberID();     
         let productDescription = document.getElementById('productDescription').value;
-        let imageData = document.getElementById('carImage').toDataURL('image/jpeg');
+		let itemInput = document.getElementById('itemInput').value;
+        let imageData = document.getElementById('itemImage').toDataURL('image/jpeg');
 
-        if (productName !== '' && productDescription !== '' && imageData !== '') {
+        if (productDescription !== '' && itemInput !== '') {
             let newProduct = {
                 id: id,
-                name: productName.toUpperCase(),
                 image: imageData,
                 description: productDescription
             };
@@ -29,17 +29,17 @@ $(document).ready(function () {
                 productList.push(newProduct);
                 localStorage.setItem("productList", JSON.stringify(productList));
             }
+			getProductLists();
+			resetForm();
+			e.preventDefault();
         } else {
             alert('All fields are required. Please check your entries again');
         }
-        getProductLists();
-        resetForm();
-        e.preventDefault();
     }
 
 });
 
-//generate unique Id
+//generate Id
 function randomNumberID() {
     return Math.floor(Math.random() * (1000002 - 1 + 1)) + 1;
 }
@@ -47,14 +47,14 @@ function randomNumberID() {
 //get the data stored in the localStorage for display on load
 function getProductLists() {
     if (localStorage.getItem("productList") === null) {
-      //  setCarsCounter(0);
-        alert("Use the add button to add new classic cars.");
+      //  setCounter(0);
+        alert("Use the add button to add new item.");
 
     } else {
 
         let productList = JSON.parse(localStorage.getItem("productList"));
 
-        // This sort element when use function dragable to sort cars
+        // This sort element when use function dragable to sort items
         $("#productDisplay").sortable({
             stop : function(event, ui){
                 let sortedIds = $(this).sortable( "toArray", { key: "set_" } );
@@ -71,62 +71,56 @@ function getProductLists() {
 
             }
         });
-       //  $("#productDisplay").disableSelection();
 
         let productDisplay = document.getElementById('productDisplay');
 
-        //Display elements stores
+        //Display elements 
         productDisplay.innerHTML = '';
 
         for (let i = 0; i < productList.length; i++) {
 
             let id = productList[i].id;
-            let name = productList[i].name;
             let description = productList[i].description;
             let img =  productList[i].image;
 
-            productDisplay.innerHTML += '' +
+            productDisplay.innerHTML += 
              '<li id="'+ id + '" class="list-group-item">' +
                 '<div class="container"> ' +
                     '<div class="row"> '+
-                        '<div class="col-4"> ' +
+                        '<div class="col-6"> ' +
                             '<img class="imgCar" src="' + img + '"> ' +
                         '</div> ' +
-                        '<div class="col-4"> ' +
-                            '<span>' + description + '</span>' +
-                         '</div>' +
-                        '<div class="col-4"> ' +
-                            '<button type="button" class="btn btn-success" onclick="editProduct(\'' + id + '\')" data-toggle="modal" data-target="#addNewProductModal">Edit</button>' +
+                        '<div class="col-6"> ' +
+                            '<p class="text-justify">' + description + '</p>' +
+							'<button type="button" class="btn btn-success" onclick="editProduct(\'' + id + '\')" data-toggle="modal" data-target="#addNewProductModal">Edit</button>' +
                             '<button type="button" class="btn btn-danger"  onclick="deleteProduct(\'' + id + '\')">Delete</button>' +
-                        '</div>' +
+                         '</div>' +                        
                      '</div>' +
                  '</div>'  +
-            '</li>';
+            '</li>' ;
 
         }
-        setCarsCounter(productList.length);
+        setCounter(productList.length);
     }
 }
 
 //Add element
 function addProduct(id) {
 
-    let productName = document.getElementById('productName').value;
     let productDescription = document.getElementById('productDescription').value;
-    let imageData = document.getElementById('carImage').toDataURL('image/jpeg');
+    let imageData = document.getElementById('itemImage').toDataURL('image/jpeg');
 
     let productList = JSON.parse(localStorage.getItem("productList"));
 
-    if (productName !== '' && productDescription !== '') {
+    if (imageData !== '' && productDescription !== '') {
         let newProduct = {
             id: id,
-            name: productName.toUpperCase(),
             image: imageData,
             description: productDescription
         };
-        //get position in grid
+    
+    //get position in grid when was edited
         for (let i = 0; i < productList.length; i++) {
-
             if (productList[i].id == id) {
                 productList.splice(i, 1, newProduct);
             }
@@ -134,29 +128,26 @@ function addProduct(id) {
 
         if (localStorage.getItem("productList") === null || localStorage.getItem("productList") === [] || localStorage.getItem("productList") === undefined) {
             let productList = [];
-            //productList.push(newProduct);
             localStorage.setItem("productList", JSON.stringify(productList));
         } else {
-           // let productList = JSON.parse(localStorage.getItem("productList"));
-         //   productList.push(newProduct);
             localStorage.setItem("productList", JSON.stringify(productList));
         }
     }
 }
 
-// Editing a Car
+// Edit an existen item
 function editProduct(id) {
     "use strict";
     document.getElementById('modalSubmit').style.display = "none";
-    document.getElementById("addNewProductModalLabel").textContent = "Edit Car";
+    document.getElementById("addNewProductModalLabel").textContent = "Edit Item";
 
     let parentDiv = document.getElementById('modalFooter');
     let productList = JSON.parse(localStorage.getItem("productList"));
 
-
     if (parentDiv.contains(document.getElementById("editButton"))) {
         document.getElementById('editButton').remove();
     }
+	
     let editButton = document.createElement('button');
     editButton.id = "editButton";
     editButton.className = "fa fa-hdd-o btn btn-outline-primary btn-sm m-2";
@@ -165,7 +156,6 @@ function editProduct(id) {
 
     for (let i = 0; i < productList.length; i++) {
         if (productList[i].id == id) {
-            document.getElementById("productName").value = productList[i].name;
             document.getElementById("productDescription").value = productList[i].description;
             setCanvas(productList[i].image)
 
@@ -173,8 +163,6 @@ function editProduct(id) {
     }
 
     document.getElementById("editButton").addEventListener("click", function () {
-
-		//localStorage.setItem("productList", JSON.stringify(productList));
 		addProduct(id);        
         getProductLists();
         resetForm();
@@ -198,15 +186,16 @@ function deleteProduct(id) {
     getProductLists(); // to quickly display what is remaining from local storage.
 }
 
+//Clear data in form
 function resetForm() {
-    document.getElementById("productName").value = "";
     document.getElementById("productDescription").value = "";
-    document.getElementById('carInput').value  = "";
+    document.getElementById('itemInput').value  = "";
 	clearCanvas();
-   // document.getElementById('canvasImg').src  = "";
+
 
 }
 
+//Clear Form 
 function productFormReset() {
     document.getElementById('modalSubmit').style.display = "block";
     document.getElementById("addNewProductModalLabel").textContent = "New Product Form";
@@ -215,91 +204,88 @@ function productFormReset() {
 }
 
 
-// counts cars quantity
-function setCarsCounter(counter) {
+// counts items
+function setCounter(counter) {
     document.getElementById("counter").textContent = counter;
 }
 
 //Remove Canvas Img after add Car
 function clearCanvas(){
 	
-	let canvas = document.getElementById('carImage');
+	let canvas = document.getElementById('itemImage');
 	let context = canvas.getContext('2d');
 	context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-
+//get image and set canvas in edition
 function setCanvas(imagenData){
 
-   // let ctx = document.getElementById('carImage').getContext('2d');
-	
-	let myCanvas = document.getElementById('carImage');
+	let myCanvas = document.getElementById('itemImage');
     let ctx = myCanvas.getContext('2d');
 	
     let img = new Image();
     img.src = imagenData;
     img.onload = function () {
-		
-		myCanvas.width = 320;
-        myCanvas.height = 320;
-        ctx.drawImage(img, 0, 0);
-		
-       
+       ctx.drawImage(img, 0, 0);   
     }
 }
 
-function readURL() {
-
-    let myCanvas = document.getElementById('carImage');
-    let ctx = myCanvas.getContext('2d');
-    let img = new Image();
-
-    img.onload = function(){
-       
-	   myCanvas.width = 320;
-       myCanvas.height = 320;
-       ctx.drawImage(img, 0, 0);
-
-        //   console.log(myCanvas.toDataURL('image/jpeg'));
-    };
-    img.src = URL.createObjectURL(event.target.files[0]);
-}
 
 
-
-function render(src){
-	var MAX_HEIGHT = 320;
-	var image = new Image();
-	image.onload = function(){
-		var canvas = document.getElementById("carImage");
-		if(image.height > MAX_HEIGHT) {
-			image.width *= MAX_HEIGHT / image.height;
-			image.height = MAX_HEIGHT;
-		}
-		var ctx = canvas.getContext("2d");
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		canvas.width = image.width;
-		canvas.height = image.height;
-		ctx.drawImage(image, 0, 0, image.width, image.height);
-	};
-	image.src = URL.createObjectURL(event.target.files[0]);
-}
-
-
-
-$("#carInput").change(function(){
-	//render();
-    readURL(this);
+$("#itemInput").change(function(){
+	readInput(this)
+    //readURL(this);
 })
 
-//MaxCachacter TextBox Area
-function minmax(value, min, max)
-{
-    if(parseInt(value) < min || isNaN(parseInt(value)))
-        return min;
-    else if(parseInt(value) > max)
-        return max;
-    else return value;
-}
+//set canvas in addition
+function readInput() {
 
+	var canvas = document.getElementById('itemImage');
+	var context = canvas.getContext('2d');
+	var imageObj = new Image();
+	
+	imageObj.onload = function() {
+              fitImageOn(canvas, imageObj);
+	  };
+	
+			  var fitImageOn = function(canvas, imageObj) {
+			 context.clearRect(0, 0, canvas.width, canvas.height);
+			 //context.clearRect(0, 0, 320, 320);
+
+			  var imageDimensionRatio = imageObj.width / imageObj.height;
+			  var canvasDimensionRatio = canvas.width / canvas.height;
+			  var renderableHeight, renderableWidth, xStart, yStart;
+			  
+			  if(imageDimensionRatio < canvasDimensionRatio) {
+				
+				renderableHeight = canvas.height;
+				renderableWidth = imageObj.width * (renderableHeight / imageObj.height);
+				xStart = (canvas.width - renderableWidth) / 2;
+				yStart = 0;
+			  } else if(imageDimensionRatio > canvasDimensionRatio) {
+				
+				renderableWidth = canvas.width
+				renderableHeight = imageObj.height * (renderableWidth / imageObj.width);
+				xStart = 0;
+				yStart = (canvas.height - renderableHeight) / 2;
+			  } else {
+				
+				renderableHeight = canvas.height;
+				renderableWidth = canvas.width;
+				xStart = 0;
+				yStart = 0;
+			  }
+			  
+			context.drawImage(imageObj, xStart, yStart, renderableWidth, renderableHeight);
+		};
+   
+        
+		
+	  imageObj.src = URL.createObjectURL(event.target.files[0]);
+};
+ 
+
+
+
+	
 
