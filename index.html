@@ -1,291 +1,101 @@
+<!DOCTYPE html>
 
-$(document).ready(function () {
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD App with JS and HTML5 LocalStorage</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">    
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    getProductLists();
-    document.getElementById('modalSubmit').addEventListener('click', modalSubmit);
+	<link rel="shortcut icon" type="image/png" href="img/leito.jpg"/>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">  
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
-    function modalSubmit(e) {
-		
-        let id = randomNumberID();     
-        let productDescription = document.getElementById('productDescription').value;
-		let itemInput = document.getElementById('itemInput').value;
-        let imageData = document.getElementById('itemImage').toDataURL('image/jpeg');
+    <title>Products</title>
 
-        if (productDescription !== '' && itemInput !== '') {
-            let newProduct = {
-                id: id,
-                image: imageData,
-                description: productDescription
-            };
+</head>
 
-            //Add new product to localStorage. The localStorage key for all the product is productList'
-            if (localStorage.getItem("productList") === null || localStorage.getItem("productList") === []
-                || localStorage.getItem("productList") === undefined) {
-                let productList = [];
-                productList.push(newProduct);
-                localStorage.setItem("productList", JSON.stringify(productList));
-            } else {
-                let productList = JSON.parse(localStorage.getItem("productList"));
-                productList.push(newProduct);
-                localStorage.setItem("productList", JSON.stringify(productList));
-            }
-			getProductLists();
-			resetForm();
-			e.preventDefault();
-        } else {
-            alert('All fields are required. Please check your entries again');
-        }
-    }
+<body>
 
-});
+<!-- This is the main body<div> container section -->
+<div class="container-fluid">
 
-//generate Id
-function randomNumberID() {
-    return Math.floor(Math.random() * (1000002 - 1 + 1)) + 1;
-}
-
-//get the data stored in the localStorage for display on load
-function getProductLists() {
-    if (localStorage.getItem("productList") === null) {
-      //  setCounter(0);
-        alert("Use the add button to add new item.");
-
-    } else {
-
-        let productList = JSON.parse(localStorage.getItem("productList"));
-
-        // This sort element when use function dragable to sort items
-        $("#productDisplay").sortable({
-            stop : function(event, ui){
-                let sortedIds = $(this).sortable( "toArray", { key: "set_" } );
-                let productListSorted = [];
-                for (let i = 0; i < sortedIds.length; i++){
-                    for (let j = 0; j < sortedIds.length; j++){
-                        if(productList[j].id == sortedIds[i]){
-                            productListSorted.push(productList[j]);
-                            //console.log (sorted[i]) ;
-                        }
-                    }
-                }
-                localStorage.setItem("productList", JSON.stringify(productListSorted));
-
-            }
-        });
-
-        let productDisplay = document.getElementById('productDisplay');
-
-        //Display elements 
-        productDisplay.innerHTML = '';
-
-        for (let i = 0; i < productList.length; i++) {
-
-            let id = productList[i].id;
-            let description = productList[i].description;
-            let img =  productList[i].image;
-
-            productDisplay.innerHTML += 
-             '<li id="'+ id + '" class="list-group-item">' +
-                '<div class="container"> ' +
-                    '<div class="row"> '+
-                        '<div class="col-6"> ' +
-                            '<img class="imgCar" src="' + img + '"> ' +
-                        '</div> ' +
-                        '<div class="col-6"> ' +
-                            '<p class="text-justify">' + description + '</p>' +
-							'<button type="button" class="btn btn-success" onclick="editProduct(\'' + id + '\')" data-toggle="modal" data-target="#addNewProductModal">Edit</button>' +
-                            '<button type="button" class="btn btn-danger"  onclick="deleteProduct(\'' + id + '\')">Delete</button>' +
-                         '</div>' +                        
-                     '</div>' +
-                 '</div>'  +
-            '</li>' ;
-
-        }
-        setCounter(productList.length);
-    }
-}
-
-//Add element
-function addProduct(id) {
-
-    let productDescription = document.getElementById('productDescription').value;
-    let imageData = document.getElementById('itemImage').toDataURL('image/jpeg');
-
-    let productList = JSON.parse(localStorage.getItem("productList"));
-
-    if (imageData !== '' && productDescription !== '') {
-        let newProduct = {
-            id: id,
-            image: imageData,
-            description: productDescription
-        };
-    
-    //get position in grid when was edited
-        for (let i = 0; i < productList.length; i++) {
-            if (productList[i].id == id) {
-                productList.splice(i, 1, newProduct);
-            }
-        }
-
-        if (localStorage.getItem("productList") === null || localStorage.getItem("productList") === [] || localStorage.getItem("productList") === undefined) {
-            let productList = [];
-            localStorage.setItem("productList", JSON.stringify(productList));
-        } else {
-            localStorage.setItem("productList", JSON.stringify(productList));
-        }
-    }
-}
-
-// Edit an existen item
-function editProduct(id) {
-    "use strict";
-    document.getElementById('modalSubmit').style.display = "none";
-    document.getElementById("addNewProductModalLabel").textContent = "Edit Item";
-
-    let parentDiv = document.getElementById('modalFooter');
-    let productList = JSON.parse(localStorage.getItem("productList"));
-
-    if (parentDiv.contains(document.getElementById("editButton"))) {
-        document.getElementById('editButton').remove();
-    }
+    <!-- firstPart: handles the floating button counter-->
+    <div class="fixed-action-btn vertical counter">
+        <a id="counter" class="counterItems btn-floating btn-large red darken-2">0<i class="fa fa-bars fa-4x"></i></a>
+    </div>
 	
-    let editButton = document.createElement('button');
-    editButton.id = "editButton";
-    editButton.className = "fa fa-hdd-o btn btn-outline-primary btn-sm m-2";
-    editButton.textContent = " Save data";
-    parentDiv.appendChild(editButton);
+    <!-- 2ndPart: handles the ProductDashboard display -->
+    <div class="mx-auto">
+        <div class="card  rounded border-white product">
+            <div class="card-header" id="usernameSpan">
+                <h3 id="h3header">Products Items</h3>
+                <button class="btn btn-outline-success btn-sm m-3 addNewProduct pull-right" id="addNewProduct"
+                        data-toggle="modal" data-target="#addNewProductModal" >Add New Product
+                </button>
+            </div>
+            <div class="card-body text-dark" id="productDashboard">
+                <h4 class="card-title"> Products List</h4>
 
-    for (let i = 0; i < productList.length; i++) {
-        if (productList[i].id == id) {
-            document.getElementById("productDescription").value = productList[i].description;
-            setCanvas(productList[i].image)
-
-        }
-    }
-
-    document.getElementById("editButton").addEventListener("click", function () {
-		addProduct(id);        
-        getProductLists();
-        resetForm();
-        document.getElementById("editButton").style.display = "none";
-        $(".addNewProduct").on('click', productFormReset());
-
-    });
-
-}
-
-// deleting any element.
-function deleteProduct(id) {
-    let productList = JSON.parse(localStorage.getItem("productList"));
-    for (let i = 0; i < productList.length; i++) {
-        if (productList[i].id == id) {
-            productList.splice(i, 1);
-            //console.log(result);
-        }
-    }
-    localStorage.setItem("productList", JSON.stringify(productList)); //reset the values in the local storage
-    getProductLists(); // to quickly display what is remaining from local storage.
-}
-
-//Clear data in form
-function resetForm() {
-    document.getElementById("productDescription").value = "";
-    document.getElementById('itemInput').value  = "";
-	clearCanvas();
-
-
-}
-
-//Clear Form 
-function productFormReset() {
-    document.getElementById('modalSubmit').style.display = "block";
-    document.getElementById("addNewProductModalLabel").textContent = "New Product Form";
-    document.getElementById('editButton').style.display = "none";
-	resetForm();
-}
-
-
-// counts items
-function setCounter(counter) {
-    document.getElementById("counter").textContent = counter;
-}
-
-//Remove Canvas Img after add Car
-function clearCanvas(){
+                <ul class="list-group" id="productDisplay">
+					
+                </ul>
+            </div>
+        </div>
+    </div>
 	
-	let canvas = document.getElementById('itemImage');
-	let context = canvas.getContext('2d');
-	context.clearRect(0, 0, canvas.width, canvas.height);
-}
+    <!-- 3rdPart: responds to the main modal call -->
+    <div class="modal fade" id="addNewProductModal" tabindex="-1" role="dialog"
+         aria-labelledby="addNewProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- header for the modal -->
+                <div class="modal-header">                   
+                    <h4 class="modal-title left" id="addNewProductModalLabel">New Item</h4>
+                </div>
+                <!-- body of the modal -->
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="modalForm">              
+                        <div class="form-group">
+                         <input type='file' id="itemInput" accept="image/x-png,image/gif,image/jpeg"  />
+                            <canvas class="canvasImg" id="itemImage"></canvas>
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">item Description</label>
+                            <textarea id="productDescription" maxlength="300"  rows="5"></textarea>
+                        </div>
+                        <div class="modal-footer align-content-center" id="modalFooter">
+                            <button type="button" class="btn btn-outline-danger btn-sm m-2" data-dismiss="modal"
+                                    id="modalClose"onclick="productFormReset()"><i class="fa fa-close"></i> Close
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm m-2" id="modalSubmit"><i
+                                    class="fa fa-save"></i> Add Product
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-//get image and set canvas in edition
-function setCanvas(imagenData){
+<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+        crossorigin="anonymous"></script>
 
-	let myCanvas = document.getElementById('itemImage');
-    let ctx = myCanvas.getContext('2d');
-	
-    let img = new Image();
-    img.src = imagenData;
-    img.onload = function () {
-       ctx.drawImage(img, 0, 0);   
-    }
-}
-
-
-
-$("#itemInput").change(function(){
-	readInput(this)
-    //readURL(this);
-})
-
-//set canvas in addition
-function readInput() {
-
-	var canvas = document.getElementById('itemImage');
-	var context = canvas.getContext('2d');
-	var imageObj = new Image();
-	
-	imageObj.onload = function() {
-              fitImageOn(canvas, imageObj);
-	  };
-	
-			  var fitImageOn = function(canvas, imageObj) {
-			 context.clearRect(0, 0, canvas.width, canvas.height);
-			 //context.clearRect(0, 0, 320, 320);
-
-			  var imageDimensionRatio = imageObj.width / imageObj.height;
-			  var canvasDimensionRatio = canvas.width / canvas.height;
-			  var renderableHeight, renderableWidth, xStart, yStart;
-			  
-			  if(imageDimensionRatio < canvasDimensionRatio) {
-				
-				renderableHeight = canvas.height;
-				renderableWidth = imageObj.width * (renderableHeight / imageObj.height);
-				xStart = (canvas.width - renderableWidth) / 2;
-				yStart = 0;
-			  } else if(imageDimensionRatio > canvasDimensionRatio) {
-				
-				renderableWidth = canvas.width
-				renderableHeight = imageObj.height * (renderableWidth / imageObj.width);
-				xStart = 0;
-				yStart = (canvas.height - renderableHeight) / 2;
-			  } else {
-				
-				renderableHeight = canvas.height;
-				renderableWidth = canvas.width;
-				xStart = 0;
-				yStart = 0;
-			  }
-			  
-			context.drawImage(imageObj, xStart, yStart, renderableWidth, renderableHeight);
-		};
-   
-        
-		
-	  imageObj.src = URL.createObjectURL(event.target.files[0]);
-};
- 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+        crossorigin="anonymous"></script>		
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" 
+		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" 
+		crossorigin="anonymous"></script>		
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="js/index.js"></script>
 
 
+</body>
 
-	
-
+</html>
