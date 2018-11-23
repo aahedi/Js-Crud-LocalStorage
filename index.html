@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD App with Vanilla JS & HTML5 LocalStorage</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <title>Cars </title>
+
+</head>
+
+<body>
+
+<!-- This is the main body<div> container section -->
+<div class="container-fluid">
+
+    <!-- firstPart: handles the floating button -->
+    <div class="fixed-action-btn vertical">
+        <a id="counter" class="counterCars btn-floating btn-large red darken-2">0<i class="fa fa-bars fa-4x"></i></a>
+    </div>
+
+    <!-- 2ndPart: handles the ProductDashboard display -->
+    <div class="mx-auto">
+        <div class="card border-primary">
+            <div class="card-header" id="usernameSpan">
+                <h3 id="h3header">Classic Cars</h3>
+                <!-- remover with-->
+                <button class="btn btn-outline-success btn-sm m-3 addNewProduct pull-right" id="addNewProduct"
+                        data-toggle="modal" data-target="#addNewProductModal" style="width: 20%">Add New Car
+                </button>
+            </div>
+
+            <div class="card-body text-primary" id="productDashboard">
+                <h4 class="card-title"> Classic Cars List</h4>
+
+                <ul class="list-group" id="productDisplay">
+                    <!-- codes  here supplied via JS-->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- 3rdPart: responds to the main modal call -->
+    <div class="modal fade" id="addNewProductModal" tabindex="-1" role="dialog"
+         aria-labelledby="addNewProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- header for the modal -->
+                <div class="modal-header">
+                    <!--img class="imgLogo" src="https://res.cloudinary.com/ethelbert007/image/upload/v1511873622/logo_geyrq5.jpg"-->
+                    <h4 class="modal-title left" id="addNewProductModalLabel">New Car</h4>
+                </div>
+                <!-- body of the modal -->
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="modalForm">
+                        <div class="form-group">
+                            <label for="productName">Car Name</label>
+                            <input id="productName" type="text"/>
+                        </div>
+                        <div class="form-group">
+
+                         <input type='file' id="carInput" accept="image/x-png,image/gif,image/jpeg"  />
+                            <canvas class="canvasImg" id="carImage"></canvas>>
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">Car Description</label>
+                            <textarea id="productDescription" maxlength="300" ></textarea>
+                        </div>
+                        <div class="modal-footer align-content-center" id="modalFooter">
+                            <button type="button" class="btn btn-outline-danger btn-sm m-2" data-dismiss="modal"
+                                    id="modalClose"><i class="fa fa-close"></i> Close
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm m-2" id="modalSubmit"><i
+                                    class="fa fa-save"></i> Add Entry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+        integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="js/index.js"></script>
+
+
+</body>
+
+</html>
